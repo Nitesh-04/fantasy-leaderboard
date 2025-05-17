@@ -55,9 +55,9 @@ export default function IPLLeaderboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6 font-sans">
+    <div className="min-h-screen bg-gray-950 text-white p-2 font-sans">
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 p-4">
           <div className="flex items-center">
             <Trophy className="text-orange-500 mr-3" size={36} />
             <h1 className="text-3xl font-bold">IPL Fantasy Leaderboard</h1>
@@ -88,9 +88,9 @@ export default function IPLLeaderboard() {
               </thead>
               <tbody className="divide-y divide-gray-800">
                 <tr className="bg-gray-1000">
-                  <td className="p-3">Total Points</td>
+                  <td className="p-3">Total</td>
                   {players.map((player) => (
-                    <td key={player.id} className="p-3 text-center">
+                    <td key={player.id} className=" text-center">
                       <div>
                         <span className="inline-block px-2 py-1 rounded bg-yellow-900/40 text-yellow-200 ">
                           {player.totalPoints}
@@ -104,7 +104,7 @@ export default function IPLLeaderboard() {
                   <tr key={match.id} className="hover:bg-gray-800">
                     <td className="p-3">{match.name}</td>
                     {match.points.map((point, idx) => (
-                      <td key={idx} className="p-3 text-center">
+                      <td key={idx} className="py-1 text-center">
                         <span className="inline-block px-2 py-1 rounded">{point}</span>
                       </td>
                     ))}
