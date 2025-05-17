@@ -1,31 +1,58 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
-import { Trophy,TrendingUp} from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Trophy, TrendingUp } from "lucide-react";
+
+interface Player {
+  id: number | string;
+  name: string;
+  totalPoints: number;
+}
+
+interface Match {
+  id: number | string;
+  name: string;
+  points: number[];
+}
 
 export default function IPLLeaderboard() {
-  const [players] = useState([
-    { id: 1, name: "k1dlov3r", totalPoints: 24,},
-    { id: 2, name: "neats", totalPoints: 20,},
-    { id: 3, name: "soberanish", totalPoints: 14,},
-    { id: 4, name: "oik", totalPoints: 22,},
-  ]);
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [matches] = useState([
-    { id: 1, name: "PBKS vs DC", points: [2, 0, 1, 3] },
-    { id: 2, name: "RCB vs MI", points: [1, 2, 0, 1] },
-    { id: 3, name: "CSK vs KKR", points: [3, 0, 2, 1] },
-    { id: 4, name: "RR vs SRH", points: [1, 3, 0, 2] },
-    { id: 5, name: "GT vs LSG", points: [0, 2, 1, 1] },
-    { id: 6, name: "MI vs CSK", points: [2, 1, 0, 3] },
-    { id: 7, name: "DC vs KKR", points: [1.5, 1.5, 1.5, 1.5] },
-    { id: 8, name: "PBKS vs RR", points: [3, 1, 2, 0] },
-    { id: 9, name: "SRH vs GT", points: [0, 3, 1, 2] },
-    { id: 10, name: "RCB vs LSG", points: [2, 1, 3, 0] },
-    { id: 11, name: "KKR vs MI", points: [1, 0, 2, 3] },
-    { id: 12, name: "CSK vs PBKS", points: [1.5, 1.5, 1.5, 1.5] },
-    { id: 13, name: "DC vs RCB", points: [0, 3, 1, 2] },
-  ])
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [playersRes, matchesRes] = await Promise.all([
+          fetch("/api/players"),
+          fetch("/api/matches"),
+        ]);
+
+        if (!playersRes.ok || !matchesRes.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const playersData: Player[] = await playersRes.json();
+        const matchesData: Match[] = await matchesRes.json();
+
+        setPlayers(playersData);
+        setMatches(matchesData);
+      } catch (error) {
+        console.error("Error fetching leaderboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white bg-gray-950">
+        <p>Loading leaderboard...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-950 text-white p-6 font-sans">
@@ -44,28 +71,30 @@ export default function IPLLeaderboard() {
         <div className="bg-gray-900 rounded-xl overflow-hidden shadow-xl border border-gray-800">
           <div className="bg-gray-800 text-gray-300 p-4 flex justify-between items-center">
             <h2 className="font-bold text-lg">Match History</h2>
-            <span className="text-sm text-gray-400">Last 13 matches</span>
+            <span className="text-sm text-gray-400">Last {matches.length} matches</span>
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="bg-gray-800">
                   <th className="p-3 text-left">Match</th>
-                  <th className="p-3 text-center">k1dlov3r</th>
-                  <th className="p-3 text-center">neats</th>
-                  <th className="p-3 text-center">soberanish</th>
-                  <th className="p-3 text-center">oik</th>
+                  {players.map((player) => (
+                    <th key={player.id} className="p-3 text-center">
+                      {player.name}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
-
-                <tr className='bg-gray-1000'>
-                  <td className='p-3'>Total Points</td>
+                <tr className="bg-gray-1000">
+                  <td className="p-3">Total Points</td>
                   {players.map((player) => (
-                    <td className='p-3 text-center'>
-                      <div key={player.id} className="">
-                        <span className={"inline-block px-2 py-1 rounded bg-yellow-900/40 text-yellow-200 "}>{player.totalPoints}</span>
+                    <td key={player.id} className="p-3 text-center">
+                      <div>
+                        <span className="inline-block px-2 py-1 rounded bg-yellow-900/40 text-yellow-200 ">
+                          {player.totalPoints}
+                        </span>
                       </div>
                     </td>
                   ))}
@@ -76,9 +105,7 @@ export default function IPLLeaderboard() {
                     <td className="p-3">{match.name}</td>
                     {match.points.map((point, idx) => (
                       <td key={idx} className="p-3 text-center">
-                        <span className={`inline-block px-2 py-1 rounded`}>
-                          {point}
-                        </span>
+                        <span className="inline-block px-2 py-1 rounded">{point}</span>
                       </td>
                     ))}
                   </tr>
