@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Trophy, TrendingUp } from "lucide-react";
+import AddScoresModal from "./_components/AddScore";
 
 interface Player {
   id: number | string;
@@ -19,6 +20,7 @@ export default function IPLLeaderboard() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -71,7 +73,9 @@ export default function IPLLeaderboard() {
         <div className="bg-gray-900 rounded-xl overflow-hidden shadow-xl border border-gray-800">
           <div className="bg-gray-800 text-gray-300 p-4 flex justify-between items-center">
             <h2 className="font-bold text-lg">Match History</h2>
-            <span className="text-sm text-gray-400">Last {matches.length} matches</span>
+            <button onClick={() => setModalOpen(true)} className="btn bg-gray-900 py-2 px-3 rounded-xl text-orange-500">Add Scores</button>
+            <AddScoresModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} players={players} />
+            <span className="text-sm text-gray-400">{matches.length} matches</span>
           </div>
 
           <div className="overflow-x-auto">
