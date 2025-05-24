@@ -83,6 +83,7 @@ export default function AddScoresModal({ isOpen, onClose, players }: AddScoresMo
           <label className="block text-sm mb-1">Match Name</label>
           <input
             type="text"
+            required
             value={matchName}
             onChange={(e) => setMatchName(e.target.value)}
             className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-700"
