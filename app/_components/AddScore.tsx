@@ -19,6 +19,7 @@ export default function AddScoresModal({ isOpen, onClose, players }: AddScoresMo
   const [matchName, setMatchName] = useState("");
   const [isWashedOut, setIsWashedOut] = useState(false);
   const [points, setPoints] = useState<number[]>([]);
+  const [addDisable, setaddDisable] = useState(false);
 
   useEffect(() => {
     if (isWashedOut) {
@@ -35,6 +36,7 @@ export default function AddScoresModal({ isOpen, onClose, players }: AddScoresMo
   };
 
   const handleSubmit = async () => {
+    setaddDisable(true);
     const body = {
         matchName,
         isWashedOut,
@@ -59,6 +61,10 @@ export default function AddScoresModal({ isOpen, onClose, players }: AddScoresMo
     } catch (err) {
       console.error(err);
       alert("Error submitting scores.");
+    }
+    finally
+    {
+      setaddDisable(false);
     }
   };
 
@@ -112,6 +118,7 @@ export default function AddScoresModal({ isOpen, onClose, players }: AddScoresMo
 
         <button
           onClick={handleSubmit}
+          disabled={addDisable}
           className="mt-2 w-full bg-orange-500 hover:bg-orange-600 py-2 rounded font-semibold"
         >
           Submit Scores
